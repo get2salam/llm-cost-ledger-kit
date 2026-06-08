@@ -1,0 +1,10 @@
+{"timestamp":"2026-01-15T09:12:33Z","request_id":"req_001","model":"gpt-4o","input_tokens":1820,"output_tokens":420}
+{"timestamp":"2026-01-15T09:14:01Z","request_id":"req_002","model":"gpt-4o","input_tokens":2400,"output_tokens":612,"cached_input_tokens":800}
+{"timestamp":"2026-01-15T09:18:11Z","request_id":"req_003","model":"gpt-4o-mini","input_tokens":4500,"output_tokens":950}
+{"timestamp":"2026-01-15T09:22:47Z","request_id":"req_004","model":"claude-3-5-sonnet","input_tokens":3100,"output_tokens":780}
+{"timestamp":"2026-01-15T09:25:12Z","request_id":"req_005","model":"claude-3-5-sonnet-20241022","input_tokens":1280,"output_tokens":340}
+{"timestamp":"2026-01-15T09:31:55Z","request_id":"req_006","model":"claude-3-5-haiku","input_tokens":6200,"output_tokens":1100}
+{"timestamp":"2026-01-15T09:42:03Z","request_id":"req_007","model":"gpt-4o","input_tokens":5400,"output_tokens":1400}
+{"timestamp":"2026-01-15T09:48:19Z","request_id":"req_008","model":"o1-mini","input_tokens":2200,"output_tokens":1800}
+{"timestamp":"2026-01-15T09:55:42Z","request_id":"req_009","model":"gpt-4o-mini","input_tokens":3300,"output_tokens":620}
+{"timestamp":"2026-01-15T10:02:11Z","request_id":"req_010","model":"gemini-1.5-pro","input_tokens":4800,"output_tokens":1500}

@@ -1,0 +1,42 @@
+{
+  "name": "llm-cost-ledger-kit",
+  "version": "0.1.0",
+  "description": "Developer tool for estimating and comparing LLM API run costs from token-usage logs.",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "llm-cost-ledger": "bin/ledger.js"
+  },
+  "scripts": {
+    "test": "node --test 'test/*.test.js'",
+    "test:coverage": "node --test --experimental-test-coverage 'test/*.test.js'",
+    "start": "node bin/ledger.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "llm",
+    "openai",
+    "anthropic",
+    "cost",
+    "tokens",
+    "budget",
+    "cli",
+    "ledger",
+    "finops"
+  ],
+  "author": "Abdul Salam",
+  "license": "MIT",
+  "files": [
+    "bin/",
+    "src/",
+    "pricing.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/get2salam/llm-cost-ledger-kit.git"
+  }
+}

@@ -1,0 +1,7 @@
+timestamp,request_id,model,input_tokens,output_tokens,cached_input_tokens
+2026-01-15T09:12:33Z,req_001,gpt-4o,1820,420,0
+2026-01-15T09:14:01Z,req_002,gpt-4o,2400,612,800
+2026-01-15T09:18:11Z,req_003,gpt-4o-mini,4500,950,0
+2026-01-15T09:22:47Z,req_004,claude-3-5-sonnet,3100,780,0
+2026-01-15T09:25:12Z,req_005,claude-3-5-sonnet-20241022,1280,340,0
+2026-01-15T09:31:55Z,req_006,claude-3-5-haiku,6200,1100,0

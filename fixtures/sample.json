@@ -1,0 +1,23 @@
+{
+  "records": [
+    {
+      "timestamp": "2026-01-15T09:12:33Z",
+      "request_id": "req_001",
+      "model": "gpt-4o",
+      "usage": { "prompt_tokens": 1820, "completion_tokens": 420 }
+    },
+    {
+      "timestamp": "2026-01-15T09:18:11Z",
+      "request_id": "req_002",
+      "model": "claude-3-5-sonnet",
+      "usage": { "input_tokens": 3100, "output_tokens": 780 }
+    },
+    {
+      "timestamp": "2026-01-15T09:25:12Z",
+      "request_id": "req_003",
+      "model": "made-up-model",
+      "input_tokens": 1000,
+      "output_tokens": 200
+    }
+  ]
+}
