@@ -12,7 +12,10 @@ test('loadPricing reads the bundled pricing file', () => {
 
 test('normalizePricing rejects bad input', () => {
   assert.throws(() => normalizePricing(null));
+  assert.throws(() => normalizePricing([]));
   assert.throws(() => normalizePricing({}));
+  assert.throws(() => normalizePricing({ models: [] }));
+  assert.throws(() => normalizePricing({ models: {} }), /at least one model/);
 });
 
 test('normalizePricing chooses divisor based on unit', () => {
@@ -22,6 +25,36 @@ test('normalizePricing chooses divisor based on unit', () => {
   assert.equal(b.divisor, 1);
   const c = normalizePricing({ models: { x: { input: 1, output: 1 } } });
   assert.equal(c.divisor, 1_000_000, 'defaults to per_million_tokens');
+  assert.throws(
+    () => normalizePricing({ unit: 'per_character', models: { x: { input: 1, output: 1 } } }),
+    /unit must be one of/,
+  );
+});
+
+test('normalizePricing validates model rate entries before cost calculations', () => {
+  assert.throws(
+    () => normalizePricing({ models: { x: { input: 1 } } }),
+    /finite input and output rates/,
+  );
+  assert.throws(
+    () => normalizePricing({ models: { x: { input: 1, output: Number.NaN } } }),
+    /finite input and output rates/,
+  );
+  assert.throws(
+    () => normalizePricing({ models: { x: { input: 1, output: 1, cached_input: -0.5 } } }),
+    /invalid cached_input rate/,
+  );
+});
+
+test('normalizePricing validates aliases point to priced canonical models', () => {
+  assert.throws(
+    () => normalizePricing({ models: { x: { input: 1, output: 1 } }, aliases: [] }),
+    /aliases must be an object/,
+  );
+  assert.throws(
+    () => normalizePricing({ models: { x: { input: 1, output: 1 } }, aliases: { y: 'missing' } }),
+    /points to unknown model/,
+  );
 });
 
 test('resolveModel maps aliases to canonical names', () => {

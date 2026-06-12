@@ -30,7 +30,8 @@ job. This kit lets you:
 - **Pricing table** — bundled prices for popular OpenAI, Anthropic, Google, and
   open-weight models, with version-suffix aliases
   (`claude-3-5-sonnet-20241022` → `claude-3-5-sonnet`). Override with
-  `--pricing path/to/custom.json`.
+  `--pricing path/to/custom.json`; custom tables are validated up front so bad
+  units, missing rates, or broken aliases fail before cost totals are produced.
 - **Prompt caching aware** — `cached_input_tokens` are billed at the
   cached-input rate and subtracted from billable input tokens.
 - **Budget warnings** — total budget plus per-model caps, with a configurable
@@ -201,11 +202,11 @@ through `aliases`.
 npm test
 ```
 
-This runs 40 `node:test` cases:
+This runs 42 `node:test` cases:
 
 ```
-# tests 40
-# pass 40
+# tests 42
+# pass 42
 # fail 0
 ```
 
