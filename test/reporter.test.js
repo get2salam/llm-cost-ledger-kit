@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderTable, renderJson, renderComparison } from '../src/reporter.js';
+import { renderTable, renderJson, renderComparison, renderList } from '../src/reporter.js';
 import { Severity } from '../src/budget.js';
 
 const summary = {
@@ -67,4 +67,22 @@ test('renderComparison sorts priced models ascending and lists unpriced last', (
   assert.ok(cheapIdx < expensiveIdx);
   assert.ok(expensiveIdx < unknownIdx);
   assert.ok(out.includes('(no price)'));
+});
+
+test('renderList gives screen-reader-friendly labelled output', () => {
+  const out = renderList(
+    summary,
+    [{ severity: Severity.EXCEEDED, message: 'budget crossed', scope: 'total' }],
+    [
+      { model: 'cheap', canonical: 'cheap', cost: 1, unpriced: false },
+      { model: 'unknown', canonical: null, cost: null, unpriced: true },
+    ],
+  );
+
+  assert.ok(out.includes('LLM Cost Ledger summary'));
+  assert.ok(out.includes('Total: 2 requests'));
+  assert.ok(out.includes('- gpt-4o: 2 requests'));
+  assert.ok(out.includes('Comparison costs if every request used one model'));
+  assert.ok(out.includes('- unknown: no pricing data available'));
+  assert.ok(out.includes('- EXCEEDED: budget crossed'));
 });

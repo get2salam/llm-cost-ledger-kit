@@ -4,6 +4,10 @@ function fmtTokens(n) {
   return n.toLocaleString('en-US');
 }
 
+function plural(n, singular, pluralForm = `${singular}s`) {
+  return n === 1 ? singular : pluralForm;
+}
+
 function pad(str, width, align = 'left') {
   const s = String(str);
   if (s.length >= width) return s;
@@ -76,6 +80,39 @@ export function renderComparison(comparison, currency = 'USD') {
   for (const c of unpriced) {
     lines.push(`${pad(c.model, 28)}  ${pad('(no price)', 12, 'right')}`);
   }
+  return lines.join('\n');
+}
+
+export function renderList(summary, warnings = [], comparison = null) {
+  const lines = [];
+  lines.push('LLM Cost Ledger summary');
+  lines.push(
+    `Total: ${fmtTokens(summary.total_requests)} ${plural(summary.total_requests, 'request')}, ${fmtTokens(summary.total_input_tokens)} input tokens, ${fmtTokens(summary.total_output_tokens)} output tokens, ${formatMoney(summary.total_cost, summary.currency)}.`,
+  );
+  lines.push('');
+  lines.push('Models:');
+  for (const m of summary.models) {
+    const priceNote = m.unpriced ? ' No pricing data was available, so cost is reported as zero.' : '';
+    lines.push(
+      `- ${m.model}: ${fmtTokens(m.requests)} ${plural(m.requests, 'request')}, ${fmtTokens(m.input_tokens)} input tokens, ${fmtTokens(m.output_tokens)} output tokens, ${formatMoney(m.cost, summary.currency)}.${priceNote}`,
+    );
+  }
+
+  if (comparison?.length) {
+    lines.push('');
+    lines.push('Comparison costs if every request used one model:');
+    const priced = comparison.filter((c) => !c.unpriced).sort((a, b) => a.cost - b.cost);
+    const unpriced = comparison.filter((c) => c.unpriced);
+    for (const c of priced) lines.push(`- ${c.model}: ${formatMoney(c.cost, summary.currency)}`);
+    for (const c of unpriced) lines.push(`- ${c.model}: no pricing data available`);
+  }
+
+  if (warnings.length > 0) {
+    lines.push('');
+    lines.push('Budget signals:');
+    for (const w of warnings) lines.push(`- ${severityTag(w.severity)}: ${w.message}`);
+  }
+
   return lines.join('\n');
 }
 

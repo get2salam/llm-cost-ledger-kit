@@ -10,4 +10,4 @@ export {
 } from './parser.js';
 export { costForRecord, summarize, compareAgainstModels } from './calculator.js';
 export { evaluateBudget, formatMoney, highestSeverity, Severity } from './budget.js';
-export { renderTable, renderJson, renderComparison } from './reporter.js';
+export { renderTable, renderJson, renderComparison, renderList } from './reporter.js';

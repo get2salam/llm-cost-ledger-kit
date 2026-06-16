@@ -6,7 +6,7 @@ import { loadPricing, normalizePricing } from '../src/pricing.js';
 import { parseUsage, parseUsageFile } from '../src/parser.js';
 import { summarize, compareAgainstModels } from '../src/calculator.js';
 import { evaluateBudget, highestSeverity, Severity } from '../src/budget.js';
-import { renderTable, renderJson, renderComparison } from '../src/reporter.js';
+import { renderTable, renderJson, renderComparison, renderList } from '../src/reporter.js';
 
 const USAGE = `Usage: llm-cost-ledger [options]
 
@@ -18,7 +18,7 @@ Options:
       --warn-at <ratio>       Fraction of budget at which to warn (default 0.8)
       --model-budget <m=amt>  Per-model cap (repeatable). Example: --model-budget gpt-4o=2.50
       --compare <models>      Comma-separated models to compare same usage against
-      --format-output <fmt>   "table" (default) or "json"
+      --format-output <fmt>   table (default) | list | json
       --fail-on <level>       Exit non-zero on warn|exceeded (default: exceeded)
   -h, --help                  Show this help
   -V, --version               Show version
@@ -27,7 +27,10 @@ Examples:
   llm-cost-ledger --input usage.jsonl --budget 5.00
   llm-cost-ledger --input usage.csv --compare gpt-4o-mini,claude-3-5-haiku
   cat usage.jsonl | llm-cost-ledger --input - --format-output json
+  llm-cost-ledger --input usage.jsonl --format-output list --budget 5.00
 `;
+
+const OUTPUT_FORMATS = new Set(['table', 'list', 'json']);
 
 function parseArgs(args) {
   const opts = {
@@ -89,6 +92,9 @@ function parseArgs(args) {
         break;
       case '--format-output':
         opts.formatOutput = next();
+        if (!OUTPUT_FORMATS.has(opts.formatOutput)) {
+          throw new Error(`--format-output expects table, list, or json; got "${opts.formatOutput}"`);
+        }
         break;
       case '--fail-on':
         opts.failOn = next();
@@ -161,6 +167,8 @@ async function main() {
 
   if (opts.formatOutput === 'json') {
     stdout.write(renderJson(summary, warnings, comparison) + '\n');
+  } else if (opts.formatOutput === 'list') {
+    stdout.write(renderList(summary, warnings, comparison) + '\n');
   } else {
     stdout.write(renderTable(summary, warnings) + '\n');
     if (comparison) stdout.write(renderComparison(comparison, summary.currency) + '\n');

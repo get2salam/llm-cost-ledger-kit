@@ -39,6 +39,21 @@ test('CLI emits JSON when --format-output json', () => {
   assert.ok(Array.isArray(payload.summary.models));
 });
 
+test('CLI emits labelled list output for screen readers', () => {
+  const r = runCli(['--input', FIXTURE, '--format-output', 'list', '--compare', 'gpt-4o-mini']);
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(r.stdout.includes('LLM Cost Ledger summary'));
+  assert.ok(r.stdout.includes('Models:'));
+  assert.ok(r.stdout.includes('- gpt-4o:'));
+  assert.ok(r.stdout.includes('Comparison costs if every request used one model'));
+});
+
+test('CLI rejects unknown output formats', () => {
+  const r = runCli(['--input', FIXTURE, '--format-output', 'yaml']);
+  assert.equal(r.status, 2);
+  assert.ok(r.stderr.includes('--format-output expects table, list, or json'));
+});
+
 test('CLI exits non-zero when budget is exceeded', () => {
   const r = runCli(['--input', FIXTURE, '--budget', '0.001']);
   assert.equal(r.status, 1);

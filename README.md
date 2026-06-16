@@ -39,8 +39,9 @@ job. This kit lets you:
   `--fail-on` flag to control CI exit behavior.
 - **Model comparison** — re-prices your actual token totals against any set of
   candidate models.
-- **Table or JSON output** — pretty table for humans, JSON for pipelines.
-- **Tested** — 40 tests covering the parser, calculator, budget logic,
+- **Table, labelled list, or JSON output** — pretty table for humans, a
+  screen-reader-friendly list for accessibility, and JSON for pipelines.
+- **Tested** — 45 tests covering the parser, calculator, budget logic,
   reporter, and the CLI itself (spawned end-to-end).
 - **CI workflow** — GitHub Actions runs the test suite on every push.
 
@@ -128,6 +129,13 @@ $ echo $?
 1
 ```
 
+For screen readers or narrow terminals, pass `--format-output list` to avoid
+alignment-dependent tables:
+
+```bash
+node bin/ledger.js --input fixtures/sample.jsonl --format-output list --budget 0.20
+```
+
 For machine-readable output, pass `--format-output json`:
 
 ```bash
@@ -146,7 +154,7 @@ Usage: llm-cost-ledger [options]
       --warn-at <ratio>       Fraction of budget at which to warn (default 0.8)
       --model-budget <m=amt>  Per-model cap (repeatable)
       --compare <models>      Comma-separated models to re-cost against
-      --format-output <fmt>   "table" (default) or "json"
+      --format-output <fmt>   table (default) | list | json
       --fail-on <level>       Exit non-zero on warn|exceeded (default: exceeded)
   -h, --help                  Show help
   -V, --version               Show version
@@ -202,11 +210,11 @@ through `aliases`.
 npm test
 ```
 
-This runs 42 `node:test` cases:
+This runs 45 `node:test` cases:
 
 ```
-# tests 42
-# pass 42
+# tests 45
+# pass 45
 # fail 0
 ```
 
