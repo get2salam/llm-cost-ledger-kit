@@ -92,6 +92,7 @@ export function summarize(records, pricing) {
 export function compareAgainstModels(records, pricing, candidateModels) {
   // Re-cost the same token totals against each candidate model — useful for
   // "what if we switched from gpt-4o to claude-3-5-sonnet" comparisons.
+  const baselineCost = records.reduce((sum, record) => sum + costForRecord(record, pricing).cost, 0);
   const totals = records.reduce(
     (acc, r) => {
       acc.input += r.input_tokens;
@@ -105,7 +106,14 @@ export function compareAgainstModels(records, pricing, candidateModels) {
   return candidateModels.map((model) => {
     const entry = getRates(pricing, model);
     if (!entry) {
-      return { model, canonical: null, cost: null, unpriced: true };
+      return {
+        model,
+        canonical: null,
+        cost: null,
+        cost_delta: null,
+        savings_percent: null,
+        unpriced: true,
+      };
     }
     const { canonical, rates } = entry;
     const divisor = pricing.divisor;
@@ -115,6 +123,13 @@ export function compareAgainstModels(records, pricing, candidateModels) {
       (billableInput * (rates.input ?? 0)) / divisor +
       (totals.output * (rates.output ?? 0)) / divisor +
       (totals.cached * cachedRate) / divisor;
-    return { model, canonical, cost, unpriced: false };
+    return {
+      model,
+      canonical,
+      cost,
+      cost_delta: cost - baselineCost,
+      savings_percent: baselineCost > 0 ? ((baselineCost - cost) / baselineCost) * 100 : null,
+      unpriced: false,
+    };
   });
 }

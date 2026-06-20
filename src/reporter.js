@@ -8,6 +8,11 @@ function plural(n, singular, pluralForm = `${singular}s`) {
   return n === 1 ? singular : pluralForm;
 }
 
+function fmtPercent(n) {
+  if (n === null || n === undefined) return 'n/a';
+  return `${n.toFixed(1)}%`;
+}
+
 function pad(str, width, align = 'left') {
   const s = String(str);
   if (s.length >= width) return s;
@@ -69,16 +74,34 @@ export function renderComparison(comparison, currency = 'USD') {
   const lines = [];
   lines.push('');
   lines.push('Cost if every request used:');
-  const header = `${pad('Model', 28)}  ${pad('Cost', 12, 'right')}`;
+  const header = [
+    pad('Model', 28),
+    pad('Cost', 12, 'right'),
+    pad('Delta', 12, 'right'),
+    pad('Savings', 9, 'right'),
+  ].join('  ');
   lines.push(header);
   lines.push('-'.repeat(header.length));
   const priced = comparison.filter((c) => !c.unpriced).sort((a, b) => a.cost - b.cost);
   const unpriced = comparison.filter((c) => c.unpriced);
   for (const c of priced) {
-    lines.push(`${pad(c.model, 28)}  ${pad(formatMoney(c.cost, currency), 12, 'right')}`);
+    const delta = c.cost_delta ?? 0;
+    const deltaText = `${delta >= 0 ? '+' : '-'}${formatMoney(Math.abs(delta), currency)}`;
+    lines.push(
+      [
+        pad(c.model, 28),
+        pad(formatMoney(c.cost, currency), 12, 'right'),
+        pad(deltaText, 12, 'right'),
+        pad(fmtPercent(c.savings_percent), 9, 'right'),
+      ].join('  '),
+    );
   }
   for (const c of unpriced) {
-    lines.push(`${pad(c.model, 28)}  ${pad('(no price)', 12, 'right')}`);
+    lines.push(
+      [pad(c.model, 28), pad('(no price)', 12, 'right'), pad('n/a', 12, 'right'), pad('n/a', 9, 'right')].join(
+        '  ',
+      ),
+    );
   }
   return lines.join('\n');
 }
@@ -103,7 +126,16 @@ export function renderList(summary, warnings = [], comparison = null) {
     lines.push('Comparison costs if every request used one model:');
     const priced = comparison.filter((c) => !c.unpriced).sort((a, b) => a.cost - b.cost);
     const unpriced = comparison.filter((c) => c.unpriced);
-    for (const c of priced) lines.push(`- ${c.model}: ${formatMoney(c.cost, summary.currency)}`);
+    for (const c of priced) {
+      const delta = c.cost_delta ?? 0;
+      const impact =
+        delta <= 0
+          ? `saves ${formatMoney(Math.abs(delta), summary.currency)} versus current spend (${fmtPercent(c.savings_percent)} savings)`
+          : `adds ${formatMoney(delta, summary.currency)} versus current spend (${fmtPercent(Math.abs(c.savings_percent ?? 0))} increase)`;
+      lines.push(
+        `- ${c.model}: ${formatMoney(c.cost, summary.currency)}; ${impact}.`,
+      );
+    }
     for (const c of unpriced) lines.push(`- ${c.model}: no pricing data available`);
   }
 

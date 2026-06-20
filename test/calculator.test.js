@@ -96,7 +96,13 @@ test('compareAgainstModels re-prices token totals across candidates', () => {
   ];
   const comparison = compareAgainstModels(records, pricing, ['gpt-4o', 'gpt-4o-mini', 'nope']);
   approx(comparison[0].cost, 12.5);
+  approx(comparison[0].cost_delta, 0);
+  approx(comparison[0].savings_percent, 0);
   approx(comparison[1].cost, 0.15 + 0.6);
+  approx(comparison[1].cost_delta, -11.75);
+  approx(comparison[1].savings_percent, 94);
   assert.equal(comparison[2].unpriced, true);
   assert.equal(comparison[2].cost, null);
+  assert.equal(comparison[2].cost_delta, null);
+  assert.equal(comparison[2].savings_percent, null);
 });

@@ -37,8 +37,8 @@ job. This kit lets you:
 - **Budget warnings** — total budget plus per-model caps, with a configurable
   warn-at ratio. Three severity levels (`info`, `warn`, `exceeded`) and a
   `--fail-on` flag to control CI exit behavior.
-- **Model comparison** — re-prices your actual token totals against any set of
-  candidate models.
+- **Model-switch scoring** — re-prices your actual token totals against any set
+  of candidate models and reports deterministic delta/savings metrics.
 - **Table, labelled list, or JSON output** — pretty table for humans, a
   screen-reader-friendly list for accessibility, and JSON for pipelines.
 - **Tested** — 45 tests covering the parser, calculator, budget logic,
@@ -109,11 +109,11 @@ gpt-4o-mini                        2           7,800           1,570       $0.00
 TOTAL                             10          35,000           9,522       $0.1305
 
 Cost if every request used:
-Model                                 Cost
-------------------------------------------
-gemini-1.5-flash                   $0.0055
-gpt-4o-mini                        $0.0109
-claude-3-5-haiku                   $0.0661
+Model                                 Cost         Delta    Savings
+-------------------------------------------------------------------
+gemini-1.5-flash                   $0.0055       -$0.1250     95.8%
+gpt-4o-mini                        $0.0109       -$0.1196     91.6%
+claude-3-5-haiku                   $0.0661       -$0.0644     49.4%
 ```
 
 A tighter budget surfaces warnings and a non-zero exit code:

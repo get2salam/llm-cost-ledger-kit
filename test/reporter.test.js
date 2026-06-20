@@ -57,8 +57,8 @@ test('renderJson returns parseable JSON with comparison when provided', () => {
 
 test('renderComparison sorts priced models ascending and lists unpriced last', () => {
   const out = renderComparison([
-    { model: 'expensive', canonical: 'x', cost: 10, unpriced: false },
-    { model: 'cheap', canonical: 'y', cost: 1, unpriced: false },
+    { model: 'expensive', canonical: 'x', cost: 10, cost_delta: 2, savings_percent: -25, unpriced: false },
+    { model: 'cheap', canonical: 'y', cost: 1, cost_delta: -7, savings_percent: 87.5, unpriced: false },
     { model: 'unknown', canonical: null, cost: null, unpriced: true },
   ]);
   const cheapIdx = out.indexOf('cheap');
@@ -67,6 +67,9 @@ test('renderComparison sorts priced models ascending and lists unpriced last', (
   assert.ok(cheapIdx < expensiveIdx);
   assert.ok(expensiveIdx < unknownIdx);
   assert.ok(out.includes('(no price)'));
+  assert.ok(out.includes('Savings'));
+  assert.ok(out.includes('-$7.00'));
+  assert.ok(out.includes('87.5%'));
 });
 
 test('renderList gives screen-reader-friendly labelled output', () => {
@@ -74,7 +77,7 @@ test('renderList gives screen-reader-friendly labelled output', () => {
     summary,
     [{ severity: Severity.EXCEEDED, message: 'budget crossed', scope: 'total' }],
     [
-      { model: 'cheap', canonical: 'cheap', cost: 1, unpriced: false },
+      { model: 'cheap', canonical: 'cheap', cost: 1, cost_delta: -11.5, savings_percent: 92, unpriced: false },
       { model: 'unknown', canonical: null, cost: null, unpriced: true },
     ],
   );
@@ -83,6 +86,7 @@ test('renderList gives screen-reader-friendly labelled output', () => {
   assert.ok(out.includes('Total: 2 requests'));
   assert.ok(out.includes('- gpt-4o: 2 requests'));
   assert.ok(out.includes('Comparison costs if every request used one model'));
+  assert.ok(out.includes('saves $11.50 versus current spend (92.0% savings)'));
   assert.ok(out.includes('- unknown: no pricing data available'));
   assert.ok(out.includes('- EXCEEDED: budget crossed'));
 });
