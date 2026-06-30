@@ -196,6 +196,50 @@ const warnings = evaluateBudget(summary, { budget: 5.0, warnAt: 0.8 });
 console.log(summary.total_cost, warnings);
 ```
 
+## Embedding cost analysis in scripts
+
+The example below shows how to call the library API directly — no CLI, no
+log file, and no npm install step required.  The script embeds a small inline
+workload, loads the bundled pricing table, and prints a cost breakdown plus a
+model-switch comparison showing which candidate would have been cheapest for
+the same token traffic.
+
+```bash
+node examples/model-switch-analysis.js
+```
+
+```
+=== Workload summary ===
+Requests : 6
+Input    : 48,500 tokens
+Output   : 11,680 tokens
+Cached   : 3,800 tokens
+Cost     : $0.1931
+
+=== Per-model cost ===
+  gpt-4o                    $0.1242  (3 requests)
+  claude-3-5-sonnet         $0.0654  (2 requests)
+  gpt-4o-mini               $0.0035  (1 request)
+
+=== Model-switch candidates (same token traffic) ===
+  gemini-1.5-flash          $0.0071  saves $0.1860 (96.3% cheaper)
+  gpt-4o-mini               $0.0140  saves $0.1791 (92.8% cheaper)
+  claude-3-5-haiku          $0.0855  saves $0.1076 (55.7% cheaper)
+  gemini-1.5-pro            $0.1190  saves $0.0741 (38.4% cheaper)
+
+Switch to gemini-1.5-flash to save $0.1860 (96.3%) on this workload.
+
+All self-checks passed.
+```
+
+The script includes inline `node:assert` guards at the end so it exits
+non-zero if the comparison logic produces inconsistent results.  You can drop
+it into a CI job alongside your build step to catch pricing-table regressions
+before they reach production.
+
+See [`examples/model-switch-analysis.js`](examples/model-switch-analysis.js)
+for the full source.
+
 ## Pricing notes
 
 `pricing.json` ships with example list prices in USD per **million** tokens.
