@@ -10,6 +10,8 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "test:coverage": "node --test --experimental-test-coverage test/*.test.js",
+    "example": "node examples/model-switch-analysis.js",
+    "verify": "npm test && npm run example && node bin/ledger.js --input fixtures/sample.jsonl --budget 1.00",
     "start": "node bin/ledger.js"
   },
   "engines": {

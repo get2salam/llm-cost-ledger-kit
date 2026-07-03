@@ -43,7 +43,9 @@ job. This kit lets you:
   screen-reader-friendly list for accessibility, and JSON for pipelines.
 - **Tested** — 45 tests covering the parser, calculator, budget logic,
   reporter, and the CLI itself (spawned end-to-end).
-- **CI workflow** — GitHub Actions runs the test suite on every push.
+- **CI workflow** — GitHub Actions runs the test suite, the example script's
+  self-checks, and a CLI smoke test on every push, across Node 20/22 on
+  Ubuntu and macOS.
 
 ## Quickstart
 
@@ -233,9 +235,11 @@ All self-checks passed.
 ```
 
 The script includes inline `node:assert` guards at the end so it exits
-non-zero if the comparison logic produces inconsistent results.  You can drop
-it into a CI job alongside your build step to catch pricing-table regressions
-before they reach production.
+non-zero if the comparison logic produces inconsistent results. This repo's
+own CI job runs it (`npm run example`) on every push, so a pricing-table or
+calculator regression fails the build instead of only showing up in the
+README's example output. Drop the same script into your own CI job to get
+the same guard for your workload.
 
 See [`examples/model-switch-analysis.js`](examples/model-switch-analysis.js)
 for the full source.
@@ -262,7 +266,16 @@ This runs 45 `node:test` cases:
 # fail 0
 ```
 
-Same command runs in CI on every push and PR (`.github/workflows/test.yml`).
+To reproduce the full CI pipeline locally in one command — the test suite,
+the example script's self-checks, and the bundled-fixture CLI smoke test —
+run:
+
+```bash
+npm run verify
+```
+
+The same three checks run in CI on every push and PR
+(`.github/workflows/test.yml`).
 
 ## License
 

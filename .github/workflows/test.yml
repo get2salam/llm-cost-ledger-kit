@@ -23,5 +23,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Run tests
         run: npm test
+      - name: Run example script self-checks
+        run: npm run example
       - name: Run CLI smoke test on bundled fixture
         run: node bin/ledger.js --input fixtures/sample.jsonl --budget 1.00
